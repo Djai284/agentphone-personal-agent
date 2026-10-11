@@ -1,0 +1,32 @@
+{
+  "name": "booking-agent",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A personal phone agent: an MCP server that places AgentPhone calls on your behalf and reports back by MCP and SMS.",
+  "type": "module",
+  "bin": {
+    "callagent": "./src/cli.ts"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "mcp": "tsx src/mcp.ts",
+    "cli": "tsx src/cli.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.133.0",
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "commander": "^15.0.0",
+    "dotenv": "^18.0.7",
+    "zod": "^4.6.6"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.3"
+  }
+}

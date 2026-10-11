@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "personal-call-agent": {
+      "command": "npx",
+      "args": ["tsx", "src/mcp.ts"]
+    }
+  }
+}
