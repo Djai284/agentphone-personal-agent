@@ -2,6 +2,28 @@
 
 What I tried, what I saw, what I changed, and why. Newest first.
 
+## 2026-10-11: too many questions at once, and 8 PM accepted
+
+What I saw (live calls, Jai playing the restaurant):
+- The first real turn bundled everything: "…under the name Manav. Also, is outdoor seating available? And before we
+  confirm, does this reservation require any deposit?" That's hard to follow on the phone.
+- When the restaurant offered only 8 PM against a 6:30 to 7:30 window, the agent **booked it**. The grader caught it
+  (`partially_succeeded`: "outside your requested window; the assistant accepted it anyway"), but this is exactly
+  the case the brief calls out. The window lived only in the task text, while "Hard constraints" listed just the
+  deposit rule, so the model treated the time as negotiable.
+
+Changes (prompt only, `packages/core/src/voice/outbound.ts`):
+- "How to run the call" became **"The conversation, step by step"**: open with only the main question, settle the
+  exact value, then each condition (deposit, fee), then the extra questions, then read back, then goodbye. One
+  question per turn, with a bad/good example of bundling.
+- **"Limits"** replaces "Hard constraints" and states that the goal's own specifics (date, time window, party size,
+  service) are limits. Anything outside them is an alternative to report back, even if it's the only option.
+- "Also find out" now says "later in the call, one at a time".
+
+Checked with a two-Claude simulation (agent on the real prompt, Claude playing the host): the only-8-PM case
+declined 8:00 and reported it back; the happy path asked availability, then deposit, then patio, one per turn.
+AgentPhone's hosted model isn't Claude, so a live call is the real test.
+
 ## 2026-10-11: haircut call requested by text (role confusion)
 
 Setup: Jai texted "can you book a haircut for this weekend?". The intake asked for the shop, its number, the time and
