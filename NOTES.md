@@ -2,6 +2,27 @@
 
 What I tried, what I saw, what I changed, and why. Newest first.
 
+## 2026-10-11: a correct fallback graded as "failed"
+
+Request (via Claude): "Ask whether outdoor seating is available for my Friday 7:30 pm reservation. If it is, move
+it outdoors; **if not, cancel it** and confirm the cancellation." No outdoor seating, so the agent cancelled, and
+the restaurant said "Sure. Done."
+
+What I saw: the outcome came back `failed`, saying the reservation was cancelled "without your instruction". The
+result text advised calling back to reinstate the booking.
+
+Cause: the voice agent is given the whole request, including `if_not_possible`, but the grader was only shown the
+goal, constraints and questions. Doing exactly what the fallback said looked to the grader like going off-script.
+The shareable details (callback number etc.) were missing from the grader's view in the same way.
+
+Change: `describeRequest()` in `ai/outcome.ts` gives the grader the full request (fallback and shareable details
+included), plus a rule that carrying out the fallback counts as following instructions (`not_possible`, with the
+fallback's result under confirmed). Re-graded the same transcript: `not_possible`, "your reservation was cancelled
+as you asked", with the cancellation under confirmed.
+
+Lesson: whatever the voice agent is allowed to do, the grader has to be told too, or correct behavior gets
+flagged.
+
 ## 2026-10-11: too many questions at once, and 8 PM accepted
 
 What I saw (live calls, Jai playing the restaurant):

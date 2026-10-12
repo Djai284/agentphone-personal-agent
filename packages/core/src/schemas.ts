@@ -90,7 +90,7 @@ export const Outcome = z.object({
     .enum(["succeeded", "partially_succeeded", "not_possible", "failed", "no_answer", "voicemail"])
     .describe(
       "succeeded: goal met within all constraints. partially_succeeded: goal met but something asked for is missing. " +
-        "not_possible: the other party couldn't do it within the constraints (nothing was committed). " +
+        "not_possible: the goal couldn't be met within the limits; nothing else was committed, or only the requested if_not_possible fallback was carried out. " +
         "failed: the call didn't get far enough to know. no_answer / voicemail: never reached a person.",
     ),
   summary: z.string().describe("One or two plain sentences: what happened, written to the user in second person (\"you\", \"your\"), never by name."),

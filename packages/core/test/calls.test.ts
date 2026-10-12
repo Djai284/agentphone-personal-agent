@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  describeRequest,
   deterministicOutcome,
   formatResultSms,
   IdempotencyConflict,
@@ -168,6 +169,19 @@ describe("call lifecycle", () => {
 });
 
 describe("outcomes", () => {
+  it("gives the grader the fallback and shareable details, not just the goal", () => {
+    const text = describeRequest(
+      PlaceCallInput.parse(
+        request({
+          on_behalf_of: { name: "Jai", details: { callback: "+12125550100" } },
+          if_not_possible: "Cancel the reservation and confirm the cancellation.",
+        }),
+      ),
+    );
+    expect(text).toContain("If not possible: Cancel the reservation and confirm the cancellation.");
+    expect(text).toContain("callback: +12125550100");
+  });
+
   it("doesn't ask the LLM when nobody spoke", () => {
     const o = deterministicOutcome(PlaceCallInput.parse(request()), [{ speaker: "agent", text: "Hi! I'm an AI assistant…" }]);
     expect(o?.result).toBe("no_answer");

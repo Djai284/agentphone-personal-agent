@@ -14,9 +14,30 @@ Rules:
 - For each constraint: "met" needs evidence from the other party; "violated" if the agreement breaks it; "unknown" if it never came up. An unknown constraint that matters means the result is at best partially_succeeded, and it belongs in unresolved.
 - If the other party could only offer something outside the constraints and the assistant (correctly) didn't accept, the result is not_possible and the offers go in alternatives_offered.
 - If the assistant accepted something that breaks a constraint, say so plainly in the summary and mark it violated.
+- Judge the assistant against the whole request, including "If not possible". When the goal couldn't be met and the assistant carried out that fallback (e.g. cancelling a reservation because the condition wasn't met), it followed instructions: the result is not_possible, the summary says the fallback was done as asked, and what the other party agreed to for the fallback goes in confirmed. Only actions outside both the goal and the fallback count against the assistant.
+- Sharing a detail listed under "Details it may share" is expected, not a problem.
 - Speech-to-text is imperfect: read through obvious transcription errors, but don't guess at details that are genuinely unclear; list them as unresolved.
 - The summary is for the person who asked for the call: one or two plain sentences, lead with the result.
 - Write the summary, unresolved items and alternatives in second person, as if texting the person the call was made for: "You're booked for...", "Your Saturday 3:00 pm appointment is unchanged", "You'd need to decide...". Never refer to them by name or in the third person. Evidence quotes can stay as they are.`;
+
+const list = (items: string[]) => items.map((i) => `- ${i}`).join("\n") || "(none)";
+
+/**
+ * Everything the voice agent was told, in the grader's words. Anything the agent was allowed to do
+ * (a fallback, a detail it may share) has to be here, or doing it looks like going off-script.
+ */
+export function describeRequest(req: PlaceCallInput, endedAt: Date = new Date()): string {
+  const details = Object.entries(req.on_behalf_of.details).map(([k, v]) => `${k}: ${v}`);
+  return [
+    `Call made: ${todayLine(endedAt)}`,
+    `Calling: ${req.recipient ?? "unknown"} on behalf of ${req.on_behalf_of.name}`,
+    `Goal: ${req.task}`,
+    `Constraints:\n${list(req.constraints)}`,
+    `Questions to answer:\n${list(req.questions)}`,
+    `If not possible: ${req.if_not_possible ?? "don't commit to anything outside the goal; collect the alternatives offered and report back."}`,
+    `Details it may share:\n${list(details)}`,
+  ].join("\n");
+}
 
 function formatTranscript(turns: TranscriptTurn[]): string {
   return turns.map((t) => `${t.speaker === "agent" ? "ASSISTANT" : "OTHER PARTY"}: ${t.text.trim()}`).join("\n");
@@ -50,13 +71,7 @@ export class OutcomeExtractor {
     const shortcut = deterministicOutcome(req, turns);
     if (shortcut) return shortcut;
 
-    const request = [
-      `Call made: ${todayLine(endedAt)}`,
-      `Calling: ${req.recipient ?? "unknown"} on behalf of ${req.on_behalf_of.name}`,
-      `Goal: ${req.task}`,
-      `Constraints:\n${req.constraints.map((c) => `- ${c}`).join("\n") || "(none)"}`,
-      `Questions to answer:\n${req.questions.map((q) => `- ${q}`).join("\n") || "(none)"}`,
-    ].join("\n");
+    const request = describeRequest(req, endedAt);
 
     const response = await this.client.messages.parse({
       model: this.model,

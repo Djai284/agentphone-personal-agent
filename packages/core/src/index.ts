@@ -20,7 +20,7 @@ export { requestOf, toView } from "./calls/view.ts";
 // Claude: understanding requests and grading calls.
 export { Intake, IntakeDecision, type ThreadMessage } from "./ai/intake.ts";
 export { Preflight, PreflightResult } from "./ai/preflight.ts";
-export { deterministicOutcome, OutcomeExtractor } from "./ai/outcome.ts";
+export { describeRequest, deterministicOutcome, OutcomeExtractor } from "./ai/outcome.ts";
 
 // What the voice agent is told.
 export { buildGreeting, buildSystemPrompt } from "./voice/outbound.ts";
