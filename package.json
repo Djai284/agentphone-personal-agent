@@ -2,7 +2,7 @@
   "name": "booking-agent",
   "version": "0.1.0",
   "private": true,
-  "description": "A personal phone agent built on AgentPhone: ask by MCP, text, or voice; it calls on your behalf and texts you the result.",
+  "description": "A personal phone agent built on AgentPhone: ask from Claude (MCP), by text, or by phone call; it calls on your behalf and texts you the result.",
   "type": "module",
   "engines": {
     "node": ">=24"
@@ -12,14 +12,15 @@
     "apps/*"
   ],
   "scripts": {
+    "setup": "tsx scripts/setup.ts",
     "mcp": "npm run -s start -w @callagent/mcp",
-    "cli": "npm run -s start -w @callagent/cli --",
-    "phone": "npm run -s start -w @callagent/phone",
+    "server": "npm run -s start -w @callagent/server",
     "db:up": "docker compose up -d --wait postgres",
-    "db:migrate": "npm run -s migrate -w @callagent/db",
-    "db:generate": "npm run -s generate -w @callagent/db",
-    "db:studio": "npm run -s studio -w @callagent/db",
-    "postinstall": "npm run -s generate -w @callagent/db",
+    "db:migrate": "npm run -s migrate -w @callagent/core",
+    "db:deploy": "npm run -s deploy -w @callagent/core",
+    "db:generate": "npm run -s generate -w @callagent/core",
+    "db:studio": "npm run -s studio -w @callagent/core",
+    "postinstall": "npm run -s generate -w @callagent/core",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },

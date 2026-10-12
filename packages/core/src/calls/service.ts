@@ -1,7 +1,7 @@
 // The call lifecycle: place (validate → idempotency → dial), refresh (poll → finalize → notify).
 // Every step is safe to run from several processes at once and safe to repeat after a crash.
 import { createHash } from "node:crypto";
-import { type Call, CallRepository, createDb } from "@callagent/db";
+import { type Call, CallRepository, createDb } from "../db/index.ts";
 import { AgentPhone, AgentPhoneError, type ProviderCall } from "../agentphone/client.ts";
 import { mapProviderStatus } from "../agentphone/status.ts";
 import { OutcomeExtractor } from "../ai/outcome.ts";
@@ -244,25 +244,14 @@ export class CallService {
       running = true;
       try {
         await this.reconcile();
+      } catch (err) {
+        // e.g. the database is briefly unreachable: keep the process alive and try again next tick.
+        console.error(`reconcile failed: ${(err as Error).message.split("\n")[0]}`);
       } finally {
         running = false;
       }
     }, intervalMs);
     timer.unref();
     return () => clearInterval(timer);
-  }
-
-  /** Refresh until the call is terminal and its text is out (for the CLI and tests). */
-  async waitForResult(
-    id: string,
-    { intervalMs = 3000, timeoutMs = 15 * 60_000, onUpdate }: { intervalMs?: number; timeoutMs?: number; onUpdate?: (c: CallView) => void } = {},
-  ): Promise<CallView> {
-    const deadline = Date.now() + timeoutMs;
-    for (;;) {
-      const call = (await this.refresh(id))!;
-      onUpdate?.(call);
-      if ((TERMINAL_STATUSES.has(call.status) && call.sms.status !== "not_sent") || Date.now() > deadline) return call;
-      await new Promise((r) => setTimeout(r, intervalMs));
-    }
   }
 }

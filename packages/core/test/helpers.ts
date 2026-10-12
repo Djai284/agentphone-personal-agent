@@ -1,4 +1,4 @@
-import { CallRepository, createDb, type PrismaClient } from "@callagent/db";
+import { CallRepository, createDb, type PrismaClient } from "../src/db/index.ts";
 import { readFileSync } from "node:fs";
 import { afterAll, beforeEach } from "vitest";
 import { AgentPhone, CallService, type Config, type Outcome, type OutcomeExtractor, type PlaceCallRequest } from "../src/index.ts";

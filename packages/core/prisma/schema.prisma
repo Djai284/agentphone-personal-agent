@@ -1,9 +1,9 @@
-// One row per call request. Statuses live here as enums; @callagent/core derives its zod schemas
+// One row per call request. Statuses live here as enums; src/schemas.ts derives its zod schemas
 // from them, so the list of states is defined exactly once.
 
 generator client {
   provider = "prisma-client"
-  output   = "../src/generated"
+  output   = "../src/db/generated"
 }
 
 datasource db {

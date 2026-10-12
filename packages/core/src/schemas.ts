@@ -1,6 +1,6 @@
 // Domain types. Each zod schema is the single source of truth for one shape: MCP tool input/output,
 // LLM structured output, stored rows, and CLI rendering all derive from these.
-import { CallSource as DbCallSource, CallStatus as DbCallStatus, SmsStatus as DbSmsStatus } from "@callagent/db/enums";
+import { CallSource as DbCallSource, CallStatus as DbCallStatus, SmsStatus as DbSmsStatus } from "./db/generated/enums.ts";
 import { z } from "zod";
 
 /** Accepts common US formats ("212-555-0123", "(212) 555 0123", "+1 212…") and normalizes to E.164. */
@@ -93,7 +93,7 @@ export const Outcome = z.object({
         "not_possible: the other party couldn't do it within the constraints (nothing was committed). " +
         "failed: the call didn't get far enough to know. no_answer / voicemail: never reached a person.",
     ),
-  summary: z.string().describe("One or two plain sentences: what happened, written for the user."),
+  summary: z.string().describe("One or two plain sentences: what happened, written to the user in second person (\"you\", \"your\"), never by name."),
   confirmed: z
     .array(z.object({ item: z.string(), value: z.string() }))
     .describe('Facts the other party explicitly confirmed, e.g. {item: "Time", value: "Fri Oct 16, 7:00 pm"}. Empty if nothing was agreed.'),
@@ -112,7 +112,7 @@ export const Outcome = z.object({
   alternatives_offered: z
     .array(z.string())
     .describe('Options the other party offered that we did not accept, e.g. "8:00 pm Friday".'),
-  unresolved: z.array(z.string()).describe("Anything still open the user should know about or act on."),
+  unresolved: z.array(z.string()).describe("Anything still open the user should know about or act on, in second person."),
 });
 export type Outcome = z.infer<typeof Outcome>;
 

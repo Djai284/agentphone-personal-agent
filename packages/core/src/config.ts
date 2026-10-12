@@ -1,5 +1,6 @@
 import { config as loadEnv } from "dotenv";
 import { fileURLToPath } from "node:url";
+import { DEFAULT_DATABASE_URL } from "./db/defaults.ts";
 import { z } from "zod";
 import { PhoneNumber } from "./schemas.ts";
 
@@ -17,7 +18,7 @@ const Env = z.object({
     .string()
     .default("")
     .transform((s) => s.split(",").map((n) => n.trim()).filter(Boolean).map((n) => PhoneNumber.parse(n))),
-  DATABASE_URL: z.string().url(),
+  DATABASE_URL: z.string().url().default(DEFAULT_DATABASE_URL),
   ANTHROPIC_MODEL: z.string().default("claude-opus-5-5"),
   AGENTPHONE_VOICE: z.string().optional(),
   AGENTPHONE_MODEL_TIER: z.enum(["turbo", "balanced", "max", "realtime"]).default("balanced"),

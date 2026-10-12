@@ -24,8 +24,8 @@ Changes (prompt-only, plus one guard):
 
 ## 2026-10-11: spike call (hosted AgentPhone voice)
 
-Setup: one hosted call to the test phone with a hand-written prompt (`scripts/spike.ts`). The
-"restaurant" accepted the request. Fixtures are in `test/fixtures/spike-1/`.
+Setup: one hosted call to the test phone with a hand-written prompt (a one-off spike script, since removed). The
+"restaurant" accepted the request. Fixtures are in `packages/core/test/fixtures/spike-1/`.
 
 What I saw:
 - `ringing` → `in-progress` (6 s) → `completed` (52 s). The hosted agent hung up by itself after its goodbye,

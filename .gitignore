@@ -7,4 +7,4 @@ dist/
 *.db-*
 .DS_Store
 logs/
-packages/db/src/generated/
+packages/core/src/db/generated/

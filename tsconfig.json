@@ -13,5 +13,5 @@
     "types": ["node"]
   },
   "include": ["packages/*/src", "packages/*/test", "packages/*/prisma.config.ts", "apps/*/src", "apps/*/scripts", "scripts"],
-  "exclude": ["packages/db/src/generated"]
+  "exclude": ["packages/core/src/db/generated"]
 }

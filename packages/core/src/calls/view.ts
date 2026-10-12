@@ -1,6 +1,6 @@
 // Stored row → the CallView every app shows. JSON columns are validated on the way out, so a bad
 // row fails loudly here instead of somewhere downstream.
-import type { Call } from "@callagent/db";
+import type { Call } from "../db/index.ts";
 import { z } from "zod";
 import { type CallView, Outcome, type PlaceCallInput, PlaceCallInput as PlaceCallInputSchema, TranscriptTurn } from "../schemas.ts";
 

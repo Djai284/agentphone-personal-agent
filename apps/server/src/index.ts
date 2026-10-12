@@ -1,6 +1,6 @@
-// `npm run phone`: let the user text or call the agent. Starts the webhook/tool server, opens a
+// `npm run server`: let the user text or call the agent. Starts the webhook/tool server, opens a
 // cloudflared quick tunnel, and points the AgentPhone agent at it. Ctrl-C disconnects the agent again.
-import { CallService, getConfig, INBOUND_GREETING, inboundSystemPrompt, placeCallTool } from "@callagent/core";
+import { CallService, getConfig, INBOUND_GREETING, inboundSystemPrompt, OFFLINE_PROMPT, placeCallTool } from "@callagent/core";
 import { randomBytes } from "node:crypto";
 import { PhoneServer } from "./server.ts";
 import { openTunnel, waitUntilReachable } from "./tunnel.ts";
@@ -39,7 +39,7 @@ async function shutdown() {
   await service.phone
     .updateAgent(config.AGENTPHONE_AGENT_ID, {
       customTools: null,
-      systemPrompt: "You are a personal assistant line that is currently offline. Say the assistant is offline right now and to try again later, then end the call.",
+      systemPrompt: OFFLINE_PROMPT,
       beginMessage: null,
     })
     .catch((err: unknown) => console.error(`couldn't reset the agent: ${(err as Error).message}`));

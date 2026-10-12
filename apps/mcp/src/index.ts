@@ -199,3 +199,5 @@ server.registerTool(
 // Keep in-flight calls moving even when nobody is asking about them, so the SMS always goes out.
 service.startReconciler();
 await server.connect(new StdioServerTransport());
+// Exit with the client; the database pool would otherwise keep an orphaned server running.
+process.stdin.on("close", () => process.exit(0));

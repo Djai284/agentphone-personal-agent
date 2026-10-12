@@ -27,12 +27,21 @@ export const ProviderTranscript = z
   .loose();
 export type ProviderTranscript = z.infer<typeof ProviderTranscript>;
 
-export const StreamEvent = z.discriminatedUnion("event", [
-  z.object({ event: z.literal("connected"), data: z.unknown() }),
-  z.object({ event: z.literal("turn"), data: z.object({ role: z.string(), content: z.string(), createdAt: z.string().nullish() }).loose() }),
-  z.object({ event: z.literal("ended"), data: z.object({ status: z.string().nullish(), durationSeconds: z.number().nullish() }).loose() }),
-]);
-export type StreamEvent = z.infer<typeof StreamEvent>;
+export const Agent = z
+  .object({ id: z.string(), name: z.string(), voiceMode: z.string().nullish(), numbers: z.array(z.object({ id: z.string(), phoneNumber: z.string() }).loose()).nullish() })
+  .loose();
+export type Agent = z.infer<typeof Agent>;
+
+export const PhoneNumberInfo = z
+  .object({
+    id: z.string(),
+    phoneNumber: z.string(),
+    agentId: z.string().nullish(),
+    outboundSms: z.string().nullish(), // "enabled" when the number can send texts
+    voiceRouting: z.object({ method: z.string() }).loose().nullish(),
+  })
+  .loose();
+export type PhoneNumberInfo = z.infer<typeof PhoneNumberInfo>;
 
 const SentMessage =z.object({ id: z.string().nullish(), status: z.string().nullish() }).loose();
 
@@ -114,37 +123,26 @@ export class AgentPhone {
     return this.request(z.unknown(), "POST", `/calls/${id}/end`);
   }
 
-  /**
-   * Live transcript over Server-Sent Events. Replays earlier turns on connect, then yields new turns
-   * until the call ends. (GET /calls/{id} only has the transcript after the call is over.)
-   */
-  async *streamTranscript(id: string, signal?: AbortSignal): AsyncGenerator<StreamEvent> {
-    const res = await this.fetchImpl(`${API}/calls/${id}/transcript/stream`, {
-      headers: { Authorization: `Bearer ${this.apiKey}`, Accept: "text/event-stream" },
-      signal,
-    });
-    if (!res.ok || !res.body) throw new AgentPhoneError(`Transcript stream returned ${res.status}`, res.status, null);
-    const decoder = new TextDecoder();
-    let buffer = "";
-    for await (const chunk of res.body) {
-      buffer += decoder.decode(chunk, { stream: true });
-      let sep: number;
-      while ((sep = buffer.indexOf("\n\n")) !== -1) {
-        const block = buffer.slice(0, sep);
-        buffer = buffer.slice(sep + 2);
-        let event = "message";
-        let data = "";
-        for (const line of block.split("\n")) {
-          if (line.startsWith("event:")) event = line.slice(6).trim();
-          else if (line.startsWith("data:")) data += line.slice(5).trim();
-        }
-        if (!data) continue; // heartbeat comment
-        const parsed = StreamEvent.safeParse({ event, data: JSON.parse(data) });
-        if (!parsed.success) continue;
-        yield parsed.data;
-        if (parsed.data.event === "ended") return;
-      }
-    }
+  listAgents() {
+    return this.request(z.object({ data: z.array(Agent) }).loose(), "GET", "/agents");
+  }
+
+  createAgent(settings: Record<string, unknown>) {
+    return this.request(Agent, "POST", "/agents", settings);
+  }
+
+  listNumbers() {
+    return this.request(z.object({ data: z.array(PhoneNumberInfo) }).loose(), "GET", "/numbers");
+  }
+
+  /** Move a number to an agent (it leaves whichever agent had it). */
+  attachNumber(agentId: string, numberId: string): Promise<unknown> {
+    return this.request(z.unknown(), "POST", `/agents/${agentId}/numbers`, { numberId });
+  }
+
+  /** Route the number's incoming calls to its agent (rather than a SIP trunk). */
+  routeVoiceToAgent(numberId: string): Promise<unknown> {
+    return this.request(z.unknown(), "PATCH", `/numbers/${numberId}/voice-routing`, { method: "agent" });
   }
 
   updateAgent(agentId: string, fields: Record<string, unknown>): Promise<unknown> {

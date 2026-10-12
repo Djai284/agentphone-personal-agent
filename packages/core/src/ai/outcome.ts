@@ -15,7 +15,8 @@ Rules:
 - If the other party could only offer something outside the constraints and the assistant (correctly) didn't accept, the result is not_possible and the offers go in alternatives_offered.
 - If the assistant accepted something that breaks a constraint, say so plainly in the summary and mark it violated.
 - Speech-to-text is imperfect: read through obvious transcription errors, but don't guess at details that are genuinely unclear; list them as unresolved.
-- The summary is for the person who asked for the call: one or two plain sentences, lead with the result.`;
+- The summary is for the person who asked for the call: one or two plain sentences, lead with the result.
+- Write the summary, unresolved items and alternatives in second person, as if texting the person the call was made for: "You're booked for...", "Your Saturday 3:00 pm appointment is unchanged", "You'd need to decide...". Never refer to them by name or in the third person. Evidence quotes can stay as they are.`;
 
 function formatTranscript(turns: TranscriptTurn[]): string {
   return turns.map((t) => `${t.speaker === "agent" ? "ASSISTANT" : "OTHER PARTY"}: ${t.text.trim()}`).join("\n");
