@@ -16,7 +16,16 @@ function who(call: CallView): string {
   return call.recipient ?? call.to;
 }
 
-export function formatResultSms(call: CallView): string {
+/**
+ * `withDashboardLink` adds the call's AgentPhone dashboard page. Only the account owner can open it,
+ * so it's for texts to the owner, not to other people who asked by text or voice.
+ */
+export function formatResultSms(call: CallView, { withDashboardLink = false } = {}): string {
+  const link = withDashboardLink && call.dashboard_url ? `\n\nFull call: ${call.dashboard_url}` : "";
+  return resultBody(call) + link;
+}
+
+function resultBody(call: CallView): string {
   const o = call.outcome;
   if (!o) {
     const why: Record<string, string> = {

@@ -50,7 +50,8 @@ function describe(call: CallView): string {
     case "analyzing":
       return "Call ended; working out the result.";
     default:
-      return formatResultSms(call) + (call.sms.status === "sent" ? `\n\n(Result texted to the user at ${call.sms.to}.)` : call.sms.status === "failed" ? `\n\n(Text to the user failed: ${call.sms.error})` : "");
+      // MCP is the owner's own client, so the dashboard link is useful here.
+      return formatResultSms(call, { withDashboardLink: true }) + (call.sms.status === "sent" ? `\n\n(Result texted to the user at ${call.sms.to}.)` : call.sms.status === "failed" ? `\n\n(Text to the user failed: ${call.sms.error})` : "");
   }
 }
 

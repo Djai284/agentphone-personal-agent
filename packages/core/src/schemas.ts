@@ -138,6 +138,10 @@ export const CallView = z.object({
   transcript: z.array(TranscriptTurn),
   outcome: Outcome.nullable(),
   sms: z.object({ status: SmsStatus, to: z.string().nullable(), error: z.string().nullable() }),
+  dashboard_url: z
+    .string()
+    .nullable()
+    .describe("The call in the AgentPhone dashboard (transcript, recording). Only the account owner can open it."),
 });
 export type CallView = z.infer<typeof CallView>;
 

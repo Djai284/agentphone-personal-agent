@@ -1,5 +1,6 @@
 // Stored row → the CallView every app shows. JSON columns are validated on the way out, so a bad
 // row fails loudly here instead of somewhere downstream.
+import { dashboardCallUrl } from "../agentphone/agent.ts";
 import type { Call } from "../db/index.ts";
 import { z } from "zod";
 import { type CallView, Outcome, type PlaceCallInput, PlaceCallInput as PlaceCallInputSchema, TranscriptTurn } from "../schemas.ts";
@@ -27,5 +28,6 @@ export function toView(row: Call): CallView {
     transcript: z.array(TranscriptTurn).parse(row.transcript),
     outcome: row.outcome ? Outcome.parse(row.outcome) : null,
     sms: { status: row.smsStatus === "sending" ? "not_sent" : row.smsStatus, to: row.smsTo, error: row.smsError },
+    dashboard_url: row.providerCallId ? dashboardCallUrl(row.providerCallId) : null,
   };
 }

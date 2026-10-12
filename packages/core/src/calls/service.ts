@@ -206,7 +206,8 @@ export class CallService {
   async notify(id: string): Promise<void> {
     const row = (await this.repo.get(id))!;
     if (!(await this.repo.claimSms(id, row.requester))) return;
-    const body = formatResultSms(toView(row));
+    // The dashboard link only helps the account owner; anyone else would hit a login page.
+    const body = formatResultSms(toView(row), { withDashboardLink: row.requester === this.config.USER_PHONE });
     try {
       const sent = await this.phone.sendSms(this.config.AGENTPHONE_NUMBER_ID, row.requester, body);
       const failed = ["failed", "undelivered", "rejected", "error"].includes(String(sent.status ?? "").toLowerCase());

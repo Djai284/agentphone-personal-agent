@@ -3,6 +3,11 @@
 
 export const AGENT_NAME = "Personal Call Agent";
 
+/** The call's page in the AgentPhone dashboard: transcript, recording, and summary. Requires logging in to the account. */
+export function dashboardCallUrl(providerCallId: string): string {
+  return `https://agentphone.ai/calls/${providerCallId}`;
+}
+
 /** What a caller hears when nothing is serving incoming calls (`npm run server` isn't running). */
 export const OFFLINE_PROMPT =
   "You are a personal assistant line that is currently offline. Say the assistant is offline right now and to try again later, then end the call.";

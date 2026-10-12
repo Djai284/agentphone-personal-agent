@@ -110,6 +110,26 @@ describe("call lifecycle", () => {
     expect(body.initialGreeting).toContain("on behalf of Manav");
   });
 
+  it("links the owner's result text to the call in the AgentPhone dashboard", async () => {
+    const { phone, log } = fakeAgentPhone({ calls: [completed] });
+    const { svc } = makeService(phone);
+    const { call } = await place(svc, request());
+    const done = (await svc.refresh(call.call_id))!;
+    expect(done.dashboard_url).toBe("https://agentphone.ai/calls/cmv4g27uu2huvlfp4y2a0v9lz");
+    const sms = log.find((l) => l.path === "/messages")!.body as { body: string };
+    expect(sms.body).toContain("Full call: https://agentphone.ai/calls/cmv4g27uu2huvlfp4y2a0v9lz");
+  });
+
+  it("leaves the dashboard link out for other requesters, who can't log in to it", async () => {
+    const { phone, log } = fakeAgentPhone({ calls: [completed] });
+    const { svc } = makeService(phone);
+    const { call } = await place(svc, request({ notify_phone: "+13125550188" }));
+    await svc.refresh(call.call_id);
+    const sms = log.find((l) => l.path === "/messages")!.body as { body: string; to_number: string };
+    expect(sms.to_number).toBe("+13125550188");
+    expect(sms.body).not.toContain("agentphone.ai/calls");
+  });
+
   it("reports an unanswered call accurately", async () => {
     const noAnswer = { ...completed, status: "completed", durationSeconds: 0, failureReason: "dial_no_answer", transcripts: [] };
     const { phone, log } = fakeAgentPhone({ calls: [noAnswer] });

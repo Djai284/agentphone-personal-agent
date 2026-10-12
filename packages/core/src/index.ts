@@ -6,7 +6,7 @@ export { todayLine, upcomingDays } from "./calendar.ts";
 
 // AgentPhone: REST client, status mapping, and what it sends us (webhooks, tool requests).
 export { Agent, AgentPhone, AgentPhoneError, type CreateCallParams, PhoneNumberInfo, type ProviderCall } from "./agentphone/client.ts";
-export { AGENT_NAME, AGENT_SETTINGS, OFFLINE_PROMPT } from "./agentphone/agent.ts";
+export { AGENT_NAME, AGENT_SETTINGS, dashboardCallUrl, OFFLINE_PROMPT } from "./agentphone/agent.ts";
 export { mapProviderStatus } from "./agentphone/status.ts";
 export { isPersonalNumber, ToolRequest, verifySignature, WebhookEvent } from "./agentphone/webhooks.ts";
 
