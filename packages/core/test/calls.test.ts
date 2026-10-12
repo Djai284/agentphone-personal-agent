@@ -188,6 +188,24 @@ describe("outcomes", () => {
     expect(o?.constraint_checks[0]?.status).toBe("unknown");
   });
 
+  it("labels a carried-out fallback as done, not as a failure", async () => {
+    const { phone } = fakeAgentPhone({ calls: [completed] });
+    const { svc } = makeService(phone, {
+      outcome: {
+        result: "fallback_succeeded",
+        summary: "Nothing was free from 7 to 8, so as your backup plan you're booked at 6:00 pm.",
+        confirmed: [{ item: "Time", value: "Fri Oct 16, 6:00 pm" }],
+        constraint_checks: [],
+        answers: [],
+        alternatives_offered: [],
+        unresolved: [],
+      },
+    });
+    const { call } = await place(svc, request());
+    const text = formatResultSms((await svc.refresh(call.call_id))!);
+    expect(text.split("\n")[0]).toBe("✅ Done (backup plan): Bella Napoli");
+  });
+
   it("formats a readable result text", async () => {
     const { phone } = fakeAgentPhone({ calls: [completed] });
     const { svc } = makeService(phone, {

@@ -4,6 +4,7 @@ import type { CallView, Outcome } from "./schemas.ts";
 const RESULT_LABEL: Record<Outcome["result"], string> = {
   succeeded: "✅ Done",
   partially_succeeded: "⚠️ Partly done",
+  fallback_succeeded: "✅ Done (backup plan)",
   not_possible: "❌ Couldn't do it",
   failed: "❌ Call didn't finish",
   no_answer: "📵 No answer",

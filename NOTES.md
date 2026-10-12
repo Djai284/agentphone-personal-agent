@@ -2,6 +2,28 @@
 
 What I tried, what I saw, what I changed, and why. Newest first.
 
+## 2026-10-11: backup plan worked but was labeled "Couldn't do it"
+
+Request: "Book 2 between 7 and 8 pm; if nothing's free, book the **closest** time between 6 and 9." The restaurant
+said "can't do seven or eight, but we can do six", and the agent booked 6:00.
+
+What I saw:
+- The result text led with "❌ Couldn't do it" on top of "you're booked at 6:00 pm". That came from my previous
+  fix: it told the grader that a carried-out fallback is `not_possible`. That read fine for the cancellation case
+  and is wrong for a fallback that books something. There was no category for "goal not possible, backup plan done".
+- The agent took the first offer. "Closest" meant it should have asked what else was open (8:30 was closer).
+
+Changes:
+- New result `fallback_succeeded`, shown as "✅ Done (backup plan)". `not_possible` again means nothing was committed.
+- Grader: a carried-out fallback is `fallback_succeeded`; if the fallback asked it to choose and it didn't find out
+  the options first, that goes under unresolved.
+- Voice prompt: when the fallback asks to choose (closest, earliest, cheapest), first ask what's available in the
+  allowed range, then pick by that rule.
+
+Checked: re-graded both fallback calls (this one and the cancellation); both now read "✅ Done (backup plan)",
+and the 6 PM one notes that closer times weren't checked. In simulation, with the host offering only 6:00 at
+first, the agent asked about other times, heard 8:30, and booked that.
+
 ## 2026-10-11: a correct fallback graded as "failed"
 
 Request (via Claude): "Ask whether outdoor seating is available for my Friday 7:30 pm reservation. If it is, move

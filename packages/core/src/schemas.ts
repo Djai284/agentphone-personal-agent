@@ -87,10 +87,11 @@ export type TranscriptTurn = z.infer<typeof TranscriptTurn>;
 /** Structured result of a call, extracted from the transcript. Generic across task types. */
 export const Outcome = z.object({
   result: z
-    .enum(["succeeded", "partially_succeeded", "not_possible", "failed", "no_answer", "voicemail"])
+    .enum(["succeeded", "partially_succeeded", "fallback_succeeded", "not_possible", "failed", "no_answer", "voicemail"])
     .describe(
       "succeeded: goal met within all constraints. partially_succeeded: goal met but something asked for is missing. " +
-        "not_possible: the goal couldn't be met within the limits; nothing else was committed, or only the requested if_not_possible fallback was carried out. " +
+        "fallback_succeeded: the goal couldn't be met, and the requested if_not_possible fallback was carried out (e.g. booked the backup time, cancelled as instructed). " +
+        "not_possible: the goal couldn't be met within the limits and nothing was committed. " +
         "failed: the call didn't get far enough to know. no_answer / voicemail: never reached a person.",
     ),
   summary: z.string().describe("One or two plain sentences: what happened, written to the user in second person (\"you\", \"your\"), never by name."),

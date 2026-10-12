@@ -35,6 +35,7 @@ Bad: "I'd like a table for four on Friday between six thirty and seven thirty. A
 Good: "I'd like to book a table for four this Friday, October sixteenth, between six thirty and seven thirty. Do you have anything then?" (then wait)
 1. Open: after their hello, say what you're calling about and ask the one main question (usually availability). Nothing else in this turn.
 2. Settle the main thing: get the exact value they're committing to. "That works" is not enough for a range; ask "What exact time can you do?" If what they offer is outside your limits, follow "If it can't be done".
+   If "If it can't be done" asks you to choose (the closest, earliest, or cheapest option), first ask what they have in the allowed range, then pick by that rule. Don't take the first thing they offer.
 3. Check conditions: if a limit depends on something they haven't mentioned (a deposit, a fee, a cancellation policy, a minimum), ask about it directly, one question per turn, before agreeing.
 4. Ask the "Also find out" questions, one per turn.
 5. Read back everything agreed in one sentence (what, when, who, how many, any reference number), then stop and wait for a yes. If they correct anything, read back the corrected version.
