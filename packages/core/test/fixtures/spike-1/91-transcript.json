@@ -1,0 +1,55 @@
+{
+  "status": 200,
+  "body": {
+    "callId": "cmv4g27uu2huvlfp4y2a0v9lz",
+    "status": "completed",
+    "direction": "outbound",
+    "fromNumber": "+16282224629",
+    "toNumber": "+12125550123",
+    "startedAt": "2026-10-11T23:18:24.582000Z",
+    "endedAt": "2026-10-11T23:19:16.582000Z",
+    "durationSeconds": 52,
+    "transcript": [
+      {
+        "role": "agent",
+        "content": "Hi! I'm an AI assistant calling on behalf of Manav. Is this a good time to make a reservation?",
+        "createdAt": "2026-10-11T23:19:17.928000Z"
+      },
+      {
+        "role": "user",
+        "content": "Yeah. Right now is a good time. ",
+        "createdAt": "2026-10-11T23:19:17.929000Z"
+      },
+      {
+        "role": "agent",
+        "content": "Great, thank you! I'd like to book a table for four this Friday between six thirty and seven thirty PM under the name Manav. Also, could you let me know if outdoor seating is available?",
+        "createdAt": "2026-10-11T23:19:17.929000Z"
+      },
+      {
+        "role": "user",
+        "content": "Yeah. So in that timing, works, and outdoor seating is actually not available. ",
+        "createdAt": "2026-10-11T23:19:17.930000Z"
+      },
+      {
+        "role": "user",
+        "content": "Because of the rain. ",
+        "createdAt": "2026-10-11T23:19:17.931000Z"
+      },
+      {
+        "role": "agent",
+        "content": "Thank you for letting me know. Please confirm that the reservation for four this Friday between six thirty and seven thirty PM under the name Manav is set for indoor seating.",
+        "createdAt": "2026-10-11T23:19:17.931000Z"
+      },
+      {
+        "role": "user",
+        "content": "Yep. That's correct. ",
+        "createdAt": "2026-10-11T23:19:17.932000Z"
+      },
+      {
+        "role": "agent",
+        "content": "Thank you so much for your help! Have a great day.",
+        "createdAt": "2026-10-11T23:19:17.932000Z"
+      }
+    ]
+  }
+}

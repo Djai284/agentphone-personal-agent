@@ -2,26 +2,26 @@
   "name": "booking-agent",
   "version": "0.1.0",
   "private": true,
-  "description": "A personal phone agent: an MCP server that places AgentPhone calls on your behalf and reports back by MCP and SMS.",
+  "description": "A personal phone agent built on AgentPhone: ask by MCP, text, or voice; it calls on your behalf and texts you the result.",
   "type": "module",
-  "bin": {
-    "callagent": "./src/cli.ts"
-  },
   "engines": {
     "node": ">=24"
   },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "scripts": {
-    "mcp": "tsx src/mcp.ts",
-    "cli": "tsx src/cli.ts",
+    "mcp": "npm run -s start -w @callagent/mcp",
+    "cli": "npm run -s start -w @callagent/cli --",
+    "phone": "npm run -s start -w @callagent/phone",
+    "db:up": "docker compose up -d --wait postgres",
+    "db:migrate": "npm run -s migrate -w @callagent/db",
+    "db:generate": "npm run -s generate -w @callagent/db",
+    "db:studio": "npm run -s studio -w @callagent/db",
+    "postinstall": "npm run -s generate -w @callagent/db",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
-  },
-  "dependencies": {
-    "@anthropic-ai/sdk": "^0.133.0",
-    "@modelcontextprotocol/sdk": "^1.32.1",
-    "commander": "^15.0.0",
-    "dotenv": "^18.0.7",
-    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@types/node": "^26.6.5",

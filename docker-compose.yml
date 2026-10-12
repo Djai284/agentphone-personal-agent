@@ -1,0 +1,21 @@
+# Local Postgres for development and tests: `npm run db:up`.
+# Port 5434 to stay clear of other local Postgres instances (5432/5433 are common).
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: callagent
+      POSTGRES_PASSWORD: callagent
+      POSTGRES_DB: callagent
+    ports:
+      - "5434:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./packages/db/init-test-db.sql:/docker-entrypoint-initdb.d/init-test-db.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U callagent"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+volumes:
+  pgdata:

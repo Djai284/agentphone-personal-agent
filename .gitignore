@@ -6,3 +6,5 @@ dist/
 *.db
 *.db-*
 .DS_Store
+logs/
+packages/db/src/generated/

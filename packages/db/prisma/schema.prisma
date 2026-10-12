@@ -1,0 +1,100 @@
+// One row per call request. Statuses live here as enums; @callagent/core derives its zod schemas
+// from them, so the list of states is defined exactly once.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// Lifecycle of a call. Terminal: completed, no_answer, busy, failed, canceled.
+enum CallStatus {
+  queued      // stored, not yet handed to AgentPhone
+  dialing     // AgentPhone accepted it; not answered yet
+  in_progress // connected
+  analyzing   // ended; extracting the outcome
+  completed
+  no_answer
+  busy
+  failed
+  canceled
+}
+
+/// The result text to the requester. `sending` is an internal claim so it goes out exactly once.
+enum SmsStatus {
+  not_sent
+  sending
+  sent
+  failed
+  skipped
+}
+
+/// How the request reached us.
+enum CallSource {
+  mcp
+  cli
+  sms
+  voice
+}
+
+model Call {
+  id             String     @id
+  idempotencyKey String     @unique @map("idempotency_key")
+  /// Hash of the request minus its key: the same key with a different request is rejected.
+  requestHash    String     @map("request_hash")
+  /// The validated PlaceCallInput, as submitted.
+  request        Json
+  source         CallSource
+  /// Phone number of whoever asked; they get the result text.
+  requester      String
+  status         CallStatus @default(queued)
+  providerCallId String?    @unique @map("provider_call_id")
+  toNumber       String     @map("to_number")
+  recipient      String?
+  task           String
+  startedAt      DateTime?  @map("started_at")
+  endedAt        DateTime?  @map("ended_at")
+  durationSeconds Float?    @map("duration_seconds")
+  endReason      String?    @map("end_reason")
+  error          String?
+  transcript     Json       @default("[]")
+  outcome        Json?
+  /// Set while one process analyzes an ended call; an expired lease can be re-claimed after a crash.
+  finalizeLease  DateTime?  @map("finalize_lease")
+  smsStatus      SmsStatus  @default(not_sent) @map("sms_status")
+  smsTo          String?    @map("sms_to")
+  smsError       String?    @map("sms_error")
+  smsMessageId   String?    @map("sms_message_id")
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @updatedAt @map("updated_at")
+  events         CallEvent[]
+
+  @@index([status])
+  @@index([requester, createdAt])
+  @@map("calls")
+}
+
+/// Audit trail: status changes, poll errors, texts sent.
+model CallEvent {
+  id     Int      @id @default(autoincrement())
+  callId String   @map("call_id")
+  call   Call     @relation(fields: [callId], references: [id], onDelete: Cascade)
+  at     DateTime @default(now())
+  type   String
+  detail String?
+
+  @@index([callId])
+  @@map("call_events")
+}
+
+/// AgentPhone webhook deliveries already handled (it retries; each must be processed once).
+model WebhookDelivery {
+  id         String   @id
+  event      String?
+  receivedAt DateTime @default(now()) @map("received_at")
+
+  @@map("webhook_deliveries")
+}

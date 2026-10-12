@@ -1,0 +1,13 @@
+{
+  "status": 200,
+  "body": {
+    "id": "cmv4g27uu2huvlfp4y2a0v9lz",
+    "agentId": "cmv4g0h0t2en1lfp4z9cdvep2",
+    "phoneNumberId": "cms3t1c9d02hsebnlog5uec0x",
+    "fromNumber": "+16282224629",
+    "toNumber": "+12125550123",
+    "direction": "outbound",
+    "status": "ringing",
+    "startedAt": "2026-10-11T23:18:24.582000Z"
+  }
+}

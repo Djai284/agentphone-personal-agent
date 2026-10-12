@@ -2,7 +2,7 @@
   "mcpServers": {
     "personal-call-agent": {
       "command": "npx",
-      "args": ["tsx", "src/mcp.ts"]
+      "args": ["tsx", "apps/mcp/src/index.ts"]
     }
   }
 }
